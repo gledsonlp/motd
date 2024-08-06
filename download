@@ -1,1 +1,41 @@
 #!/bin/bash
+
+BASE_URL="https://raw.githubusercontent.com/gledsonlp/motd/main"
+FILES=("00-header" "10-sysinfo")
+DEST_DIR="/etc/update-motd.d"
+
+# Verificar se o diretório de destino existe
+if [ ! -d "$DEST_DIR" ]; then
+    echo "O diretório $DEST_DIR não existe. Abortando a operação."
+    exit 1
+fi
+
+download_and_setup() {
+    local file_name=$1
+    local url="$BASE_URL/$file_name"
+    local dest_path="$DEST_DIR/$file_name"
+
+    curl -o "$dest_path" "$url"
+
+    if [ $? -eq 0 ]; then
+        echo "Download do $file_name concluído com sucesso."
+    else
+        echo "Falha ao baixar o $file_name."
+        exit 1
+    fi
+
+    chmod +x "$dest_path"
+
+    if [ $? -eq 0 ]; then
+        echo "Permissão de execução concedida ao $file_name."
+    else
+        echo "Falha ao conceder permissão de execução ao $file_name."
+        exit 1
+    fi
+}
+
+for file in "${FILES[@]}"; do
+    download_and_setup "$file"
+done
+
+echo "Todos os scripts foram baixados e configurados com sucesso."
