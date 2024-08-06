@@ -15,7 +15,7 @@ download_and_setup() {
     local url="$BASE_URL/$file_name"
     local dest_path="$DEST_DIR/$file_name"
 
-    curl -o "$dest_path" "$url"
+    wget -O "$dest_path" "$url"
 
     if [ $? -eq 0 ]; then
         echo "Download do $file_name concluído com sucesso."
